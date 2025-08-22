@@ -13,12 +13,20 @@ def central_dashboard(request):
     else:
         # Handle other roles or default case
         return redirect('core:login')
+
+@login_required
+def mark_notification_as_read(request, notification_id):
+    notification = Notification.objects.get(id=notification_id)
+    if notification.user == request.user.userprofile:
+        notification.is_read = True
+        notification.save()
+    return redirect('core:central_dashboard')
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
 from .decorators import role_required
 from .forms import TransactionForm, CashOutForm, CashInForm, RateForm, PayrollForm
-from .models import Rate, Transaction, Employee, Payroll
+from .models import Rate, Transaction, Employee, Payroll, Notification
 
 @login_required
 @role_required(allowed_roles=['operations'])

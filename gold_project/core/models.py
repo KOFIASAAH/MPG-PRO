@@ -17,6 +17,7 @@ class UserProfile(models.Model):
 class Branch(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
+    daily_expense_cap = models.DecimalField(max_digits=10, decimal_places=2, default=100000.00)
 
     def __str__(self):
         return self.name
@@ -88,3 +89,12 @@ class Payroll(models.Model):
 
     def __str__(self):
         return f"Payroll for {self.employee.user.user.username} on {self.pay_date}"
+
+class Notification(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.user.user.username}: {self.message}"

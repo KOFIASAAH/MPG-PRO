@@ -11,6 +11,9 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
+    # Notifications
+    path('notifications/read/<int:notification_id>/', views.mark_notification_as_read, name='mark_notification_as_read'),
+
     # Branch Operations
     path('branch/quick-buy/', views.quick_buy_entry, name='quick_buy_entry'),
     path('branch/todays-transactions/', views.todays_transactions, name='todays_transactions'),
