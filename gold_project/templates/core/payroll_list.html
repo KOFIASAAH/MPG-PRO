@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Employee Payroll</h1>
+<a href="{% url 'core:pay_payroll' %}">Pay Roll</a>
+<table>
+    <thead>
+        <tr>
+            <th>Employee</th>
+            <th>Salary</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.user.user.username }}</td>
+            <td>{{ employee.salary }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
