@@ -1,9 +1,16 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'core'
 
 urlpatterns = [
+    path('', views.central_dashboard, name='central_dashboard'),
+
+    # Auth
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
     # Branch Operations
     path('branch/quick-buy/', views.quick_buy_entry, name='quick_buy_entry'),
     path('branch/todays-transactions/', views.todays_transactions, name='todays_transactions'),

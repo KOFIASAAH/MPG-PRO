@@ -9,10 +9,11 @@
     <nav>
         <ul>
             {% if user.is_authenticated %}
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li>Welcome, {{ user.username }}</li>
+                <li><a href="{% url 'core:central_dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'core:logout' %}">Logout</a></li>
             {% else %}
-                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'core:login' %}">Login</a></li>
             {% endif %}
         </ul>
     </nav>

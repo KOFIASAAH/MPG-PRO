@@ -1,5 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+
+@login_required
+def central_dashboard(request):
+    user_role = request.user.userprofile.role
+    if user_role == 'head_of_finance':
+        return redirect('core:finance_dashboard')
+    elif user_role == 'hr':
+        return redirect('core:hr_dashboard')
+    elif user_role == 'operations':
+        return redirect('core:todays_transactions') # Or a new operations dashboard
+    else:
+        # Handle other roles or default case
+        return redirect('core:login')
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
