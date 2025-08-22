@@ -49,7 +49,9 @@ class Command(BaseCommand):
                     user.groups.add(group)
 
                 if user_data['role']:
-                    UserProfile.objects.create(user=user, role=user_data['role'], branch=user_data['branch'])
+                    user.userprofile.role = user_data['role']
+                    user.userprofile.branch = user_data['branch']
+                    user.userprofile.save()
 
                 self.stdout.write(self.style.SUCCESS(f"User '{user_data['username']}' created."))
 
