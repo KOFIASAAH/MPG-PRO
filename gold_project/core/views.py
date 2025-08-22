@@ -90,10 +90,7 @@ def cash_in(request):
 
     return render(request, 'core/cash_in.html', {'form': form})
 
-# Head of Finance Views
-@login_required
-@role_required(allowed_roles=['head_of_finance'])
-def finance_dashboard(request):
+def _get_dashboard_context():
     today = timezone.now().date()
 
     # Daily Purchase Summary
@@ -109,12 +106,18 @@ def finance_dashboard(request):
         daily_total = Transaction.objects.filter(timestamp__date=date).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
         chart_data.append({'date': date.strftime('%Y-%m-%d'), 'total': daily_total})
 
-    context = {
+    return {
         'daily_total_weight': daily_total_weight,
         'daily_total_amount': daily_total_amount,
         'payment_breakdown': payment_breakdown,
         'chart_data': chart_data,
     }
+
+# Head of Finance Views
+@login_required
+@role_required(allowed_roles=['head_of_finance'])
+def finance_dashboard(request):
+    context = _get_dashboard_context()
     return render(request, 'core/finance_dashboard.html', context)
 
 @login_required
@@ -152,8 +155,8 @@ def flagged_transactions(request):
 @login_required
 @role_required(allowed_roles=['hr'])
 def hr_dashboard(request):
-    # For now, HR dashboard shows the same as finance dashboard
-    return finance_dashboard(request)
+    context = _get_dashboard_context()
+    return render(request, 'core/finance_dashboard.html', context)
 
 @login_required
 @role_required(allowed_roles=['hr'])
