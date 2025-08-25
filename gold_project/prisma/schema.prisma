@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String             @unique
+  hashedPassword    String?
+  role              Role
+  branchId          String?
+  branch            Branch?            @relation(fields: [branchId], references: [id])
+  createdAt         DateTime           @default(now())
+  cashDisbursementsIssued  CashDisbursement[] @relation("IssuedBy")
+  cashDisbursementsApproved CashDisbursement[] @relation("ApprovedBy")
+  goldReceipts      GoldReceipt[]
+  auditLogs         AuditLog[]
+}
+
+model Branch {
+  id                String             @id @default(cuid())
+  name              String
+  code              String             @unique
+  location          String?
+  isActive          Boolean            @default(true)
+  users             User[]
+  cashDisbursements CashDisbursement[]
+  goldReceipts      GoldReceipt[]
+}
+
+model CashDisbursement {
+  id              String      @id @default(cuid())
+  branchId        String
+  branch          Branch      @relation(fields: [branchId], references: [id])
+  amount          Decimal
+  currency        String      @default("GHS")
+  referenceNo     String      @unique
+  reason          String?
+  issuedByUserId  String
+  issuedByUser    User        @relation("IssuedBy", fields: [issuedByUserId], references: [id])
+  approvedByUserId String?
+  approvedByUser  User?       @relation("ApprovedBy", fields: [approvedByUserId], references: [id])
+  issuedAt        DateTime    @default(now())
+  status          CashDisbursementStatus @default(PENDING)
+}
+
+model GoldReceipt {
+  id              String         @id @default(cuid())
+  branchId        String
+  branch          Branch         @relation(fields: [branchId], references: [id])
+  weightGrams     Decimal
+  purityPercent   Decimal
+  assayMethod     AssayMethod    @default(ESTIMATE)
+  pricePerGram    Decimal
+  feesPercent     Decimal?
+  deductions      Decimal?
+  receivedByUserId String
+  receivedByUser  User           @relation(fields: [receivedByUserId], references: [id])
+  receivedAt      DateTime       @default(now())
+  images          String[]
+  note            String?
+}
+
+model RateBoard {
+  id              String   @id @default(cuid())
+  effectiveDate   DateTime @unique
+  pricePerGram    Decimal
+  notes           String?
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String
+  actorUser   User     @relation(fields: [actorUserId], references: [id])
+  entity      String
+  entityId    String
+  action      String
+  diff        Json
+  at          DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  HEAD_OF_FINANCE
+  BRANCH_MANAGER
+  TELLER
+  AUDITOR
+}
+
+enum CashDisbursementStatus {
+  PENDING
+  APPROVED
+  DISBURSED
+  REJECTED
+  CANCELLED
+}
+
+enum AssayMethod {
+  ESTIMATE
+  XRF
+  LAB
+}
