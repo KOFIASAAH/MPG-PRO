@@ -19,6 +19,7 @@ urlpatterns = [
     path('branch/todays-transactions/', views.todays_transactions, name='todays_transactions'),
     path('branch/cash-out/', views.cash_out, name='cash_out'),
     path('branch/cash-in/', views.cash_in, name='cash_in'),
+    path('branch/customer/add/', views.add_customer, name='add_customer'),
 
     # Head of Finance
     path('finance/dashboard/', views.finance_dashboard, name='finance_dashboard'),

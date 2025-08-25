@@ -9,7 +9,7 @@ def central_dashboard(request):
     elif user_role == 'hr':
         return redirect('core:hr_dashboard')
     elif user_role == 'operations':
-        return redirect('core:todays_transactions') # Or a new operations dashboard
+        return redirect('core:quick_buy_entry')
     else:
         # Handle other roles or default case
         return redirect('core:login')
@@ -25,7 +25,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Sum
 from .decorators import role_required
-from .forms import TransactionForm, CashOutForm, CashInForm, RateForm, PayrollForm
+from .forms import TransactionForm, CashOutForm, CashInForm, RateForm, PayrollForm, CustomerForm
 from .models import Rate, Transaction, Employee, Payroll, Notification
 
 @login_required
@@ -98,6 +98,19 @@ def cash_in(request):
 
     return render(request, 'core/cash_in.html', {'form': form})
 
+@login_required
+@role_required(allowed_roles=['operations'])
+def add_customer(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('core:quick_buy_entry') # Redirect to quick buy after adding customer
+    else:
+        form = CustomerForm()
+
+    return render(request, 'core/add_customer.html', {'form': form})
+
 def _get_dashboard_context():
     today = timezone.now().date()
 
@@ -129,7 +142,7 @@ def finance_dashboard(request):
     return render(request, 'core/finance_dashboard.html', context)
 
 @login_required
-@role_required(allowed_roles=['head_of_finance'])
+@role_required(allowed_roles=['head_of_finance', 'operations'])
 def set_rate(request):
     if request.method == 'POST':
         form = RateForm(request.POST)

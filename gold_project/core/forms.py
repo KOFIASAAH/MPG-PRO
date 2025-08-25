@@ -28,3 +28,8 @@ class PayrollForm(forms.ModelForm):
     class Meta:
         model = Payroll
         fields = ['employee', 'amount']
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name', 'id_number', 'phone_number', 'id_image']
