@@ -1,0 +1,5 @@
+
+> starter-repo@1.0.0 start
+> node server/index.js
+
+Server listening at http://localhost:3000
